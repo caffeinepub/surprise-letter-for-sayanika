@@ -21,11 +21,11 @@ interface PetalConfig {
 }
 
 const PETAL_COLORS = [
-  "oklch(0.88 0.10 350)",
-  "oklch(0.82 0.13 5)",
-  "oklch(0.92 0.06 15)",
-  "oklch(0.78 0.15 358)",
-  "oklch(0.95 0.05 8)",
+  "oklch(0.85 0.15 85)" /* sunflower yellow */,
+  "oklch(0.88 0.10 350)" /* soft pink */,
+  "oklch(0.80 0.08 280)" /* muted lavender */,
+  "oklch(0.85 0.15 85)" /* sunflower yellow */,
+  "oklch(0.88 0.10 350)" /* soft pink */,
 ];
 
 function usePetals(count: number): PetalConfig[] {
@@ -108,7 +108,13 @@ function Sparkle({ config }: { config: SparkleConfig }) {
       >
         <polygon
           points="5,0 6,4 10,5 6,6 5,10 4,6 0,5 4,4"
-          fill="oklch(0.72 0.14 350)"
+          fill={
+            config.id % 3 === 0
+              ? "oklch(0.85 0.15 85)"
+              : config.id % 3 === 1
+                ? "oklch(0.88 0.10 350)"
+                : "oklch(0.80 0.08 280)"
+          }
         />
       </svg>
     </div>
@@ -529,14 +535,16 @@ function HomePage() {
         overflow: "hidden",
         position: "relative",
         background: `
-          radial-gradient(ellipse 80% 60% at 30% 20%, oklch(0.92 0.07 350 / 0.6) 0%, transparent 60%),
-          radial-gradient(ellipse 70% 50% at 70% 80%, oklch(0.88 0.08 5 / 0.5) 0%, transparent 55%),
-          radial-gradient(ellipse 90% 80% at 50% 50%, oklch(0.97 0.02 10) 0%, oklch(0.94 0.04 5) 100%)
+          radial-gradient(ellipse 60% 40% at 20% 10%, oklch(0.92 0.08 85 / 0.25) 0%, transparent 55%),
+          radial-gradient(ellipse 50% 35% at 80% 85%, oklch(0.90 0.07 350 / 0.20) 0%, transparent 50%),
+          radial-gradient(ellipse 70% 60% at 50% 50%, oklch(0.97 0.03 75) 0%, oklch(0.95 0.04 70) 100%)
         `,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        padding: "24px 16px",
+        boxSizing: "border-box",
       }}
     >
       <BackgroundScene />
@@ -553,55 +561,100 @@ function HomePage() {
           gap: "0",
         }}
       >
-        {/* Envelope container */}
+        {/* Greeting */}
+        <p
+          style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: "clamp(14px, 3.5vw, 18px)",
+            color: "oklch(0.55 0.12 60)",
+            letterSpacing: "0.04em",
+            margin: "0 0 16px 0",
+            textAlign: "center",
+            userSelect: "none",
+          }}
+        >
+          Happy Women&apos;s Day, Sayanika 🌸
+        </p>
+
+        {/* Bouquet + envelope composition */}
         <div
           style={{
             position: "relative",
-            width: "min(320px, 80vw)",
-            minWidth: "260px",
-            height: "230px",
+            width: "min(380px, 88vw)",
+            margin: "0 auto",
           }}
         >
-          {/* Envelope — click target */}
+          <img
+            src="/assets/uploads/image-1-1.png"
+            alt="Flower bouquet"
+            style={{
+              width: "100%",
+              display: "block",
+              borderRadius: "8px",
+              filter: "drop-shadow(0 6px 20px oklch(0.55 0.10 60 / 0.18))",
+            }}
+          />
+
+          {/* Envelope overlaid on bouquet — positioned at lower-centre */}
           <button
             type="button"
             data-ocid="envelope.canvas_target"
-            className="envelope-container"
+            className="envelope-on-bouquet"
             onClick={handleOpen}
-            aria-label="Click to open envelope"
+            aria-label="Tap envelope to open your letter"
             style={{
-              position: "relative",
-              zIndex: 30,
-              width: "100%",
-              height: "100%",
+              position: "absolute",
+              bottom: "18%",
+              left: "50%",
+              transform: "translateX(-50%)",
               background: "none",
               border: "none",
               padding: 0,
+              width: "min(180px, 46vw)",
+              cursor: "pointer",
+              zIndex: 10,
             }}
           >
             <Envelope />
           </button>
         </div>
 
-        {/* Hint text — always visible on home page */}
+        {/* Prominent hint below bouquet */}
         <div
-          className="envelope-hint"
           style={{
-            marginTop: "22px",
-            fontFamily: "Georgia, serif",
-            fontSize: "13.5px",
-            color: "oklch(0.55 0.14 5)",
-            letterSpacing: "0.08em",
+            marginTop: "18px",
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            gap: "8px",
+            gap: "4px",
             userSelect: "none",
             pointerEvents: "none",
           }}
         >
-          <span style={{ fontSize: "16px" }}>✉</span>
-          <span>click to open</span>
-          <span style={{ fontSize: "16px" }}>🌸</span>
+          <span
+            className="arrow-bounce"
+            style={{
+              fontSize: "22px",
+              color: "oklch(0.50 0.14 30)",
+              lineHeight: 1,
+            }}
+            aria-hidden="true"
+          >
+            ↑
+          </span>
+          <p
+            className="envelope-hint-prominent"
+            style={{
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontSize: "15px",
+              color: "oklch(0.50 0.14 30)",
+              letterSpacing: "0.04em",
+              margin: 0,
+              textAlign: "center",
+            }}
+          >
+            Tap the envelope to open your letter
+          </p>
         </div>
       </div>
 

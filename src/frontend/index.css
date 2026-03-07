@@ -1,0 +1,181 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* ─── Romantic Pink Palette ─── */
+    --background: 0.98 0.01 5;
+    --foreground: 0.22 0.04 340;
+    --card: 1 0 0;
+    --card-foreground: 0.22 0.04 340;
+    --popover: 1 0 0;
+    --popover-foreground: 0.22 0.04 340;
+    --primary: 0.62 0.18 5;
+    --primary-foreground: 1 0 0;
+    --secondary: 0.94 0.03 10;
+    --secondary-foreground: 0.62 0.18 5;
+    --muted: 0.95 0.02 355;
+    --muted-foreground: 0.55 0.05 345;
+    --accent: 0.88 0.07 10;
+    --accent-foreground: 0.35 0.10 355;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+    --border: 0.88 0.04 5;
+    --input: 0.88 0.04 5;
+    --ring: 0.62 0.18 5;
+    --chart-1: 0.62 0.18 5;
+    --chart-2: 0.72 0.12 350;
+    --chart-3: 0.55 0.15 20;
+    --chart-4: 0.80 0.10 15;
+    --chart-5: 0.45 0.13 5;
+    --sidebar: 0.98 0.01 5;
+    --sidebar-foreground: 0.22 0.04 340;
+    --sidebar-primary: 0.62 0.18 5;
+    --sidebar-primary-foreground: 1 0 0;
+    --sidebar-accent: 0.94 0.03 10;
+    --sidebar-accent-foreground: 0.62 0.18 5;
+    --sidebar-border: 0.88 0.04 5;
+    --sidebar-ring: 0.62 0.18 5;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+}
+
+/* ─── Keyframe Animations ─── */
+
+@keyframes petal-drift {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.65;
+  }
+  92% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(110vh) translateX(60px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes petal-drift-left {
+  0% {
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  92% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(110vh) translateX(-80px) rotate(-540deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sparkle-pulse {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.2) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes hint-pulse {
+  0%, 100% {
+    opacity: 0.55;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes envelope-idle-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes scene-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Envelope flap ─── */
+.envelope-flap {
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+.envelope-flap.open {
+  transform: rotateX(-180deg);
+}
+
+/* ─── Letter Paper ─── */
+.letter-paper {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s,
+              opacity 0.6s ease 0.3s;
+  pointer-events: none;
+}
+
+.letter-paper.open {
+  transform: translateY(-44%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.letter-paper.closing {
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 1, 1),
+              opacity 0.4s ease;
+  pointer-events: none;
+}
+
+/* ─── Envelope wrapper hover ─── */
+.envelope-container {
+  transition: filter 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  animation: envelope-idle-float 4s ease-in-out infinite;
+}
+
+.envelope-container:hover {
+  filter: drop-shadow(0 12px 28px oklch(0.55 0.20 5 / 0.3));
+}
+
+.envelope-hint {
+  animation: hint-pulse 2.2s ease-in-out infinite;
+}
+
+.scene-entrance {
+  animation: scene-fade-in 1s ease-out both;
+}

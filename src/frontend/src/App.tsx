@@ -6,140 +6,31 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
 
 /* ────────────────────────────────────────────────────────────────
-   Floating Particles Background (petals + sparkles)
-   Very light opacity — barely noticeable, romantic feel.
+   Watermark
 ──────────────────────────────────────────────────────────────── */
-type Particle = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  opacity: number;
-  type: "petal" | "sparkle";
-  rotation: number;
-  rotationSpeed: number;
-  hue: number; // 0-360
-  wobble: number;
-  wobbleSpeed: number;
-  wobbleAmp: number;
-};
-
-function FloatingParticles() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const COUNT = 22;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    const rand = (a: number, b: number) => a + Math.random() * (b - a);
-
-    const spawnParticle = (forceY?: number): Particle => ({
-      x: rand(0, window.innerWidth),
-      y: forceY !== undefined ? forceY : rand(-50, window.innerHeight),
-      vx: rand(-0.22, 0.22),
-      vy: rand(0.28, 0.7),
-      size: rand(4, 9),
-      opacity: rand(0.07, 0.18),
-      type: Math.random() < 0.62 ? "petal" : "sparkle",
-      rotation: rand(0, Math.PI * 2),
-      rotationSpeed: rand(-0.012, 0.012),
-      hue: Math.random() < 0.5 ? rand(0, 18) : rand(40, 60), // rose-pink or warm gold
-      wobble: rand(0, Math.PI * 2),
-      wobbleSpeed: rand(0.008, 0.02),
-      wobbleAmp: rand(0.4, 1.0),
-    });
-
-    particlesRef.current = Array.from({ length: COUNT }, () => spawnParticle());
-
-    const drawPetal = (c: CanvasRenderingContext2D, p: Particle) => {
-      c.save();
-      c.translate(p.x, p.y);
-      c.rotate(p.rotation);
-      c.globalAlpha = p.opacity;
-      c.fillStyle = `oklch(0.82 0.14 ${p.hue})`;
-      c.beginPath();
-      // Simple oval petal
-      c.ellipse(0, 0, p.size * 0.55, p.size, 0, 0, Math.PI * 2);
-      c.fill();
-      c.restore();
-    };
-
-    const drawSparkle = (c: CanvasRenderingContext2D, p: Particle) => {
-      c.save();
-      c.translate(p.x, p.y);
-      c.rotate(p.rotation);
-      c.globalAlpha = p.opacity * 0.9;
-      c.fillStyle = `oklch(0.88 0.10 ${p.hue + 30})`;
-      const r = p.size * 0.5;
-      // 4-point star
-      c.beginPath();
-      for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2;
-        const radius = i % 2 === 0 ? r : r * 0.38;
-        c.lineTo(Math.cos(angle) * radius, Math.sin(angle) * radius);
-      }
-      c.closePath();
-      c.fill();
-      c.restore();
-    };
-
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (const p of particlesRef.current) {
-        // Gentle horizontal wobble
-        p.wobble += p.wobbleSpeed;
-        p.x += p.vx + Math.sin(p.wobble) * p.wobbleAmp * 0.3;
-        p.y += p.vy;
-        p.rotation += p.rotationSpeed;
-
-        if (p.y > canvas.height + 20) {
-          // Respawn at top
-          Object.assign(p, spawnParticle(-20));
-        }
-
-        if (p.type === "petal") drawPetal(ctx, p);
-        else drawSparkle(ctx, p);
-      }
-
-      rafRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
+function Watermark() {
   return (
-    <canvas
-      ref={canvasRef}
+    <div
       style={{
         position: "fixed",
-        inset: 0,
+        bottom: "14px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 100,
+        fontFamily: "Georgia, 'Times New Roman', serif",
+        fontSize: "14px",
+        fontWeight: "600",
+        color: "oklch(0.38 0.12 75)",
+        letterSpacing: "0.04em",
         pointerEvents: "none",
-        zIndex: 0,
+        whiteSpace: "nowrap",
+        textShadow: "0 1px 3px oklch(0.96 0.02 75 / 0.9)",
       }}
-    />
+    >
+      Made by Arghya
+    </div>
   );
 }
 
@@ -291,7 +182,7 @@ function HomePage() {
         position: "relative",
       }}
     >
-      <FloatingParticles />
+      <Watermark />
 
       {/* Bouquet image — fills the page as the only visual */}
       <div
@@ -400,7 +291,7 @@ function LetterPage() {
         boxSizing: "border-box",
       }}
     >
-      <FloatingParticles />
+      <Watermark />
 
       {/* Letter card */}
       <div

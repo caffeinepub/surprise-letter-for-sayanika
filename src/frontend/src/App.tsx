@@ -8,221 +8,6 @@ import {
 } from "@tanstack/react-router";
 
 /* ────────────────────────────────────────────────────────────────
-   Floating Petals
-──────────────────────────────────────────────────────────────── */
-interface PetalConfig {
-  id: number;
-  left: number;
-  size: number;
-  duration: number;
-  delay: number;
-  direction: "right" | "left";
-  color: string;
-}
-
-const PETAL_COLORS = [
-  "oklch(0.85 0.15 85)" /* sunflower yellow */,
-  "oklch(0.88 0.10 350)" /* soft pink */,
-  "oklch(0.80 0.08 280)" /* muted lavender */,
-  "oklch(0.85 0.15 85)" /* sunflower yellow */,
-  "oklch(0.88 0.10 350)" /* soft pink */,
-];
-
-function usePetals(count: number): PetalConfig[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    left: (i * 7.3 + 3) % 97,
-    size: 6 + ((i * 3.7) % 10),
-    duration: 8 + ((i * 2.3) % 12),
-    delay: (i * 1.8) % 14,
-    direction: i % 2 === 0 ? "right" : "left",
-    color: PETAL_COLORS[i % PETAL_COLORS.length],
-  }));
-}
-
-function Petal({ config }: { config: PetalConfig }) {
-  const animName =
-    config.direction === "right" ? "petal-drift" : "petal-drift-left";
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: `${config.left}%`,
-        top: "-5%",
-        width: config.size,
-        height: config.size * 0.6,
-        borderRadius: "50% 50% 50% 0",
-        background: config.color,
-        opacity: 0,
-        animation: `${animName} ${config.duration}s ease-in ${config.delay}s infinite`,
-        willChange: "transform, opacity",
-        transform: `rotate(${(config.id * 47) % 360}deg)`,
-      }}
-    />
-  );
-}
-
-/* ────────────────────────────────────────────────────────────────
-   Sparkles
-──────────────────────────────────────────────────────────────── */
-interface SparkleConfig {
-  id: number;
-  left: number;
-  top: number;
-  size: number;
-  duration: number;
-  delay: number;
-}
-
-function useSparkles(count: number): SparkleConfig[] {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    left: (i * 11.3 + 5) % 95,
-    top: (i * 13.7 + 10) % 85,
-    size: 3 + ((i * 2.1) % 6),
-    duration: 2.5 + ((i * 0.7) % 3),
-    delay: (i * 0.9) % 5,
-  }));
-}
-
-function Sparkle({ config }: { config: SparkleConfig }) {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: `${config.left}%`,
-        top: `${config.top}%`,
-        width: config.size,
-        height: config.size,
-        opacity: 0,
-        animation: `sparkle-pulse ${config.duration}s ease-in-out ${config.delay}s infinite`,
-        willChange: "transform, opacity",
-        pointerEvents: "none",
-      }}
-    >
-      <svg
-        viewBox="0 0 10 10"
-        width={config.size}
-        height={config.size}
-        aria-hidden="true"
-      >
-        <polygon
-          points="5,0 6,4 10,5 6,6 5,10 4,6 0,5 4,4"
-          fill={
-            config.id % 3 === 0
-              ? "oklch(0.85 0.15 85)"
-              : config.id % 3 === 1
-                ? "oklch(0.88 0.10 350)"
-                : "oklch(0.80 0.08 280)"
-          }
-        />
-      </svg>
-    </div>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────────
-   Shared Background + Particles Layer
-──────────────────────────────────────────────────────────────── */
-function BackgroundScene() {
-  const petals = usePetals(18);
-  const sparkles = useSparkles(14);
-
-  return (
-    <>
-      {/* ── Floating petals layer ── */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          overflow: "hidden",
-          zIndex: 0,
-        }}
-      >
-        {petals.map((p) => (
-          <Petal key={p.id} config={p} />
-        ))}
-      </div>
-
-      {/* ── Sparkles layer ── */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      >
-        {sparkles.map((s) => (
-          <Sparkle key={s.id} config={s} />
-        ))}
-      </div>
-
-      {/* Decorative corner roses */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          left: "20px",
-          opacity: 0.35,
-          fontSize: "32px",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        🌹
-      </div>
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          opacity: 0.35,
-          fontSize: "32px",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        🌸
-      </div>
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          top: "20px",
-          left: "20px",
-          opacity: 0.25,
-          fontSize: "24px",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        🌺
-      </div>
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          top: "20px",
-          right: "20px",
-          opacity: 0.25,
-          fontSize: "24px",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        💐
-      </div>
-    </>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────────
    Flower Bouquet SVG (top-right corner of letter)
 ──────────────────────────────────────────────────────────────── */
 function FlowerBouquet() {
@@ -332,177 +117,6 @@ function FlowerBouquet() {
 }
 
 /* ────────────────────────────────────────────────────────────────
-   Envelope SVG (pure JSX, no image files)
-──────────────────────────────────────────────────────────────── */
-function Envelope() {
-  // Envelope dimensions: 320 × 230
-  const W = 320;
-  const H = 230;
-
-  return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      width="100%"
-      height="100%"
-      style={{ display: "block", overflow: "visible" }}
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="env-body" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="oklch(0.97 0.03 10)" />
-          <stop offset="100%" stopColor="oklch(0.90 0.07 5)" />
-        </linearGradient>
-        <linearGradient id="env-flap-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="oklch(0.93 0.06 10)" />
-          <stop offset="100%" stopColor="oklch(0.85 0.10 5)" />
-        </linearGradient>
-        <linearGradient id="env-bottom" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="oklch(0.88 0.09 8)" />
-          <stop offset="100%" stopColor="oklch(0.80 0.12 5)" />
-        </linearGradient>
-        <filter id="env-shadow" x="-10%" y="-10%" width="120%" height="130%">
-          <feDropShadow
-            dx="0"
-            dy="8"
-            stdDeviation="12"
-            floodColor="oklch(0.55 0.20 5)"
-            floodOpacity="0.22"
-          />
-        </filter>
-      </defs>
-
-      {/* Drop shadow behind envelope */}
-      <g filter="url(#env-shadow)">
-        {/* Envelope body */}
-        <rect
-          x="0"
-          y="0"
-          width={W}
-          height={H}
-          rx="6"
-          ry="6"
-          fill="url(#env-body)"
-        />
-
-        {/* Bottom V flap lines (decorative fold marks) */}
-        <line
-          x1="0"
-          y1="0"
-          x2={W / 2}
-          y2={H * 0.55}
-          stroke="oklch(0.80 0.10 5)"
-          strokeWidth="0.8"
-          opacity="0.5"
-        />
-        <line
-          x1={W}
-          y1="0"
-          x2={W / 2}
-          y2={H * 0.55}
-          stroke="oklch(0.80 0.10 5)"
-          strokeWidth="0.8"
-          opacity="0.5"
-        />
-
-        {/* Bottom triangle flap (V shape pointing to center-bottom) */}
-        <polygon
-          points={`0,${H} ${W},${H} ${W / 2},${H * 0.55}`}
-          fill="url(#env-bottom)"
-        />
-
-        {/* Left side flap */}
-        <polygon
-          points={`0,0 0,${H} ${W / 2},${H * 0.55}`}
-          fill="oklch(0.91 0.07 8)"
-          opacity="0.85"
-        />
-
-        {/* Right side flap */}
-        <polygon
-          points={`${W},0 ${W},${H} ${W / 2},${H * 0.55}`}
-          fill="oklch(0.89 0.08 6)"
-          opacity="0.85"
-        />
-
-        {/* Border stroke */}
-        <rect
-          x="0"
-          y="0"
-          width={W}
-          height={H}
-          rx="6"
-          ry="6"
-          fill="none"
-          stroke="oklch(0.78 0.12 5)"
-          strokeWidth="1.5"
-        />
-
-        {/* Subtle inner border */}
-        <rect
-          x="6"
-          y="6"
-          width={W - 12}
-          height={H - 12}
-          rx="3"
-          ry="3"
-          fill="none"
-          stroke="oklch(0.85 0.08 8)"
-          strokeWidth="0.8"
-          opacity="0.6"
-        />
-      </g>
-
-      {/* Top flap — closed by default on home page */}
-      <g className="envelope-flap">
-        {/* Flap triangle */}
-        <polygon
-          points={`0,0 ${W},0 ${W / 2},${H * 0.5}`}
-          fill="url(#env-flap-bg)"
-          stroke="oklch(0.78 0.12 5)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        {/* Flap inner line */}
-        <polygon
-          points={`8,0 ${W - 8},0 ${W / 2},${H * 0.47}`}
-          fill="none"
-          stroke="oklch(0.85 0.08 8)"
-          strokeWidth="0.8"
-          opacity="0.6"
-        />
-      </g>
-
-      {/* Wax seal as native SVG */}
-      <g
-        transform={`translate(${W / 2 - 26}, 8)`}
-        style={{ pointerEvents: "none" }}
-      >
-        <circle cx="26" cy="26" r="24" fill="oklch(0.52 0.22 5)" />
-        <circle cx="26" cy="26" r="21" fill="oklch(0.58 0.20 5)" />
-        <circle
-          cx="26"
-          cy="26"
-          r="22"
-          fill="none"
-          stroke="oklch(0.45 0.18 3)"
-          strokeWidth="1.5"
-          strokeDasharray="3 3"
-        />
-        <path
-          d="M26 37 C13 28 8 19 15 13 C18.5 10.5 23 12 26 17 C29 12 33.5 10.5 37 13 C44 19 39 28 26 37Z"
-          fill="oklch(0.97 0.03 5)"
-        />
-        <path
-          d="M26 35 C15 27 11 19 17 14 C20 12 24 13.5 26 18 C28 13.5 32 12 35 14 C41 19 37 27 26 35Z"
-          fill="oklch(0.97 0.03 5)"
-          opacity="0.5"
-        />
-      </g>
-    </svg>
-  );
-}
-
-/* ────────────────────────────────────────────────────────────────
    Letter Content
 ──────────────────────────────────────────────────────────────── */
 const LETTER_PARAGRAPHS = [
@@ -532,137 +146,88 @@ function HomePage() {
       style={{
         minHeight: "100dvh",
         width: "100%",
-        overflow: "hidden",
-        position: "relative",
-        background: `
-          radial-gradient(ellipse 60% 40% at 20% 10%, oklch(0.92 0.08 85 / 0.25) 0%, transparent 55%),
-          radial-gradient(ellipse 50% 35% at 80% 85%, oklch(0.90 0.07 350 / 0.20) 0%, transparent 50%),
-          radial-gradient(ellipse 70% 60% at 50% 50%, oklch(0.97 0.03 75) 0%, oklch(0.95 0.04 70) 100%)
-        `,
+        background: "oklch(0.96 0.02 75)",
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "24px 16px",
+        padding: "16px",
         boxSizing: "border-box",
       }}
     >
-      <BackgroundScene />
-
-      {/* ── Main scene ── */}
+      {/* Bouquet image — fills the page as the only visual */}
       <div
-        className="scene-entrance"
         style={{
           position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "0",
+          maxWidth: "min(700px, 96vw)",
+          width: "100%",
         }}
       >
-        {/* Greeting */}
-        <p
+        <img
+          src="/assets/uploads/image-4-1.png"
+          alt="Flower bouquet with letter inside"
           style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: "clamp(14px, 3.5vw, 18px)",
-            color: "oklch(0.55 0.12 60)",
-            letterSpacing: "0.04em",
-            margin: "0 0 16px 0",
-            textAlign: "center",
-            userSelect: "none",
+            width: "100%",
+            maxHeight: "90dvh",
+            objectFit: "contain",
+            display: "block",
           }}
-        >
-          Happy Women&apos;s Day, Sayanika 🌸
-        </p>
+        />
 
-        {/* Bouquet + envelope composition */}
-        <div
+        {/* Invisible hotspot — shaped to the envelope body in the image.
+            The envelope is a trapezoid/rectangle with a triangular flap at top.
+            We use clip-path polygon to match its actual shape closely.
+            Coordinates are percentages of the container (the img).
+            Approximate envelope outline:
+              top-left  ≈ (28%, 48%)
+              top-right ≈ (72%, 48%)
+              bottom-right ≈ (72%, 72%)
+              bottom-left  ≈ (28%, 72%)
+              with a small triangular flap peak at ~(50%, 42%)  */}
+        <button
+          type="button"
+          data-ocid="envelope.canvas_target"
+          onClick={handleOpen}
+          aria-label="Open letter"
+          className="envelope-hotspot"
           style={{
-            position: "relative",
-            width: "min(380px, 88vw)",
-            margin: "0 auto",
+            position: "absolute",
+            top: "42%",
+            left: "28%",
+            width: "44%",
+            height: "30%",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            zIndex: 10,
+            /* clip-path expressed relative to the button's own bounding box:
+               flap peak is at centre-top (50%, 0%),
+               body corners follow. */
+            clipPath: "polygon(50% 0%, 100% 18%, 100% 100%, 0% 100%, 0% 18%)",
           }}
-        >
-          <img
-            src="/assets/uploads/image-1-1.png"
-            alt="Flower bouquet"
-            style={{
-              width: "100%",
-              display: "block",
-              borderRadius: "8px",
-              filter: "drop-shadow(0 6px 20px oklch(0.55 0.10 60 / 0.18))",
-            }}
-          />
-
-          {/* Envelope overlaid on bouquet — positioned at lower-centre */}
-          <button
-            type="button"
-            data-ocid="envelope.canvas_target"
-            className="envelope-on-bouquet"
-            onClick={handleOpen}
-            aria-label="Tap envelope to open your letter"
-            style={{
-              position: "absolute",
-              bottom: "18%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              background: "none",
-              border: "none",
-              padding: 0,
-              width: "min(180px, 46vw)",
-              cursor: "pointer",
-              zIndex: 10,
-            }}
-          >
-            <Envelope />
-          </button>
-        </div>
-
-        {/* Prominent hint below bouquet */}
-        <div
-          style={{
-            marginTop: "18px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "4px",
-            userSelect: "none",
-            pointerEvents: "none",
-          }}
-        >
-          <span
-            className="arrow-bounce"
-            style={{
-              fontSize: "22px",
-              color: "oklch(0.50 0.14 30)",
-              lineHeight: 1,
-            }}
-            aria-hidden="true"
-          >
-            ↑
-          </span>
-          <p
-            className="envelope-hint-prominent"
-            style={{
-              fontFamily: "Georgia, 'Times New Roman', serif",
-              fontSize: "15px",
-              color: "oklch(0.50 0.14 30)",
-              letterSpacing: "0.04em",
-              margin: 0,
-              textAlign: "center",
-            }}
-          >
-            Tap the envelope to open your letter
-          </p>
-        </div>
+        />
       </div>
 
-      {/* Keyframe for wax seal glow inline */}
+      {/* Subtle pulse keyframe for hotspot */}
       <style>{`
-        @keyframes wax-seal-glow {
-          0%, 100% { opacity: 0.9; }
-          50% { opacity: 1; filter: drop-shadow(0 0 6px oklch(0.55 0.22 5 / 0.6)); }
+        @keyframes hotspot-pulse {
+          0%, 100% {
+            filter: drop-shadow(0 0 0px oklch(0.75 0.12 5 / 0));
+          }
+          50% {
+            filter: drop-shadow(0 0 8px oklch(0.75 0.12 5 / 0.35));
+          }
+        }
+
+        .envelope-hotspot {
+          animation: hotspot-pulse 2.4s ease-in-out infinite;
+        }
+
+        .envelope-hotspot:hover {
+          background: oklch(0.75 0.12 5 / 0.10) !important;
+        }
+
+        .envelope-hotspot:active {
+          background: oklch(0.65 0.15 5 / 0.14) !important;
         }
       `}</style>
     </div>
@@ -686,11 +251,7 @@ function LetterPage() {
         width: "100%",
         overflow: "hidden",
         position: "relative",
-        background: `
-          radial-gradient(ellipse 80% 60% at 30% 20%, oklch(0.92 0.07 350 / 0.6) 0%, transparent 60%),
-          radial-gradient(ellipse 70% 50% at 70% 80%, oklch(0.88 0.08 5 / 0.5) 0%, transparent 55%),
-          radial-gradient(ellipse 90% 80% at 50% 50%, oklch(0.97 0.02 10) 0%, oklch(0.94 0.04 5) 100%)
-        `,
+        background: "oklch(0.96 0.02 75)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -699,8 +260,6 @@ function LetterPage() {
         boxSizing: "border-box",
       }}
     >
-      <BackgroundScene />
-
       {/* Letter card */}
       <div
         className="scene-entrance"
@@ -710,10 +269,10 @@ function LetterPage() {
           zIndex: 10,
           width: "min(600px, 92vw)",
           borderRadius: "10px 10px 8px 8px",
-          background: "oklch(0.99 0.005 55)",
+          background: "oklch(0.97 0.03 75)",
           boxShadow:
-            "0 4px 6px oklch(0.55 0.12 5 / 0.12), 0 20px 60px oklch(0.45 0.18 5 / 0.22), inset 0 1px 0 oklch(1 0 0 / 0.8)",
-          border: "1px solid oklch(0.88 0.06 10)",
+            "0 4px 6px oklch(0.55 0.08 75 / 0.12), 0 20px 60px oklch(0.45 0.10 75 / 0.18), inset 0 1px 0 oklch(1 0 0 / 0.8)",
+          border: "1px solid oklch(0.88 0.05 75)",
         }}
       >
         {/* Paper texture lines */}
@@ -725,8 +284,8 @@ function LetterPage() {
               0deg,
               transparent,
               transparent 27px,
-              oklch(0.88 0.04 10 / 0.4) 27px,
-              oklch(0.88 0.04 10 / 0.4) 28px
+              oklch(0.88 0.04 85 / 0.35) 27px,
+              oklch(0.88 0.04 85 / 0.35) 28px
             )`,
             borderRadius: "inherit",
             pointerEvents: "none",
@@ -746,7 +305,7 @@ function LetterPage() {
             height: "32px",
             padding: "0 12px",
             borderRadius: "20px",
-            background: "oklch(0.88 0.08 5)",
+            background: "oklch(0.90 0.08 85)",
             border: "none",
             cursor: "pointer",
             display: "flex",
@@ -754,7 +313,7 @@ function LetterPage() {
             justifyContent: "center",
             gap: "4px",
             fontSize: "13px",
-            color: "oklch(0.45 0.18 5)",
+            color: "oklch(0.38 0.12 75)",
             zIndex: 30,
             fontFamily: "Georgia, serif",
             transition: "background 0.2s, transform 0.15s",
@@ -763,21 +322,21 @@ function LetterPage() {
           }}
           onMouseOver={(e) => {
             const btn = e.currentTarget as HTMLButtonElement;
-            btn.style.background = "oklch(0.78 0.14 5)";
+            btn.style.background = "oklch(0.80 0.12 85)";
             btn.style.transform = "translateX(-2px)";
           }}
           onMouseOut={(e) => {
             const btn = e.currentTarget as HTMLButtonElement;
-            btn.style.background = "oklch(0.88 0.08 5)";
+            btn.style.background = "oklch(0.90 0.08 85)";
             btn.style.transform = "translateX(0)";
           }}
           onFocus={(e) => {
             const btn = e.currentTarget as HTMLButtonElement;
-            btn.style.background = "oklch(0.78 0.14 5)";
+            btn.style.background = "oklch(0.80 0.12 85)";
           }}
           onBlur={(e) => {
             const btn = e.currentTarget as HTMLButtonElement;
-            btn.style.background = "oklch(0.88 0.08 5)";
+            btn.style.background = "oklch(0.90 0.08 85)";
           }}
         >
           <span style={{ fontSize: "14px" }}>←</span>
@@ -807,7 +366,7 @@ function LetterPage() {
             position: "relative",
             zIndex: 10,
             scrollbarWidth: "thin",
-            scrollbarColor: "oklch(0.80 0.10 5) transparent",
+            scrollbarColor: "oklch(0.78 0.10 85) transparent",
           }}
         >
           {LETTER_PARAGRAPHS.map((para, idx) => {
@@ -825,10 +384,10 @@ function LetterPage() {
                   fontSize: isTitle ? "17px" : isSign ? "15px" : "15px",
                   lineHeight: isTitle ? 1.4 : 1.8,
                   color: isTitle
-                    ? "oklch(0.45 0.18 5)"
+                    ? "oklch(0.40 0.14 75)"
                     : isSign || isSignLine
-                      ? "oklch(0.40 0.15 5)"
-                      : "oklch(0.28 0.06 340)",
+                      ? "oklch(0.38 0.12 75)"
+                      : "oklch(0.28 0.04 60)",
                   fontWeight: isTitle ? "700" : isSign ? "600" : "400",
                   fontStyle: isSign ? "italic" : "normal",
                   textAlign: isSign || isSignLine ? "right" : "left",
@@ -846,7 +405,7 @@ function LetterPage() {
           style={{
             height: "6px",
             background:
-              "linear-gradient(90deg, oklch(0.78 0.14 5 / 0.6), oklch(0.85 0.10 350 / 0.4), oklch(0.78 0.14 5 / 0.6))",
+              "linear-gradient(90deg, oklch(0.82 0.14 85 / 0.5), oklch(0.75 0.10 145 / 0.35), oklch(0.82 0.14 85 / 0.5))",
             borderRadius: "0 0 8px 8px",
             position: "relative",
             zIndex: 10,
